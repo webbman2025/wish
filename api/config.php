@@ -63,7 +63,6 @@ function kvRequest(array $command): ?array
     ]);
 
     $response = curl_exec($ch);
-    curl_close($ch);
 
     if ($response === false) {
         return null;
