@@ -46,7 +46,11 @@ if (!checkRateLimit($ip)) {
     jsonResponse(['success' => false, 'error' => apiMessage('rate_limit', $lang)], 429);
 }
 
-$id = appendSubmission($mobile, $message, $ip);
+try {
+    $id = appendSubmission($mobile, $message, $ip);
+} catch (Throwable $e) {
+    jsonResponse(['success' => false, 'error' => apiMessage('submit_failed', $lang)], 500);
+}
 
 jsonResponse([
     'success' => true,

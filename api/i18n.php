@@ -11,6 +11,7 @@ function apiMessage(string $key, string $lang = 'zh'): string
             'success' => '許願成功！你的訊息已顯示於許願板。',
             'method_not_allowed' => '不允許的請求方式',
             'invalid_mobile' => '請輸入有效的香港手機號碼（8 位數字）。',
+            'submit_failed' => '儲存失敗，請稍後再試。',
         ],
         'en' => [
             'too_short' => 'Your message is too short. Please enter at least 2 characters.',
@@ -20,6 +21,7 @@ function apiMessage(string $key, string $lang = 'zh'): string
             'success' => 'Wish submitted! Your message is now on the board.',
             'method_not_allowed' => 'Method not allowed',
             'invalid_mobile' => 'Please enter a valid Hong Kong mobile number (8 digits).',
+            'submit_failed' => 'Unable to save your wish. Please try again later.',
         ],
     ];
 

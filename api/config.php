@@ -5,7 +5,93 @@
 
 ini_set('display_errors', '0');
 
-define('DATA_DIR', dirname(__DIR__) . '/data');
+function isVercel(): bool
+{
+    return (bool) getenv('VERCEL');
+}
+
+function resolveDataDir(): string
+{
+    return isVercel() ? '/tmp/wish-data' : dirname(__DIR__) . '/data';
+}
+
+function kvConfigured(): bool
+{
+    return (bool) (getenv('KV_REST_API_URL') && getenv('KV_REST_API_TOKEN'));
+}
+
+function bootstrapRuntime(): void
+{
+    if (!isVercel()) {
+        return;
+    }
+
+    ini_set('session.save_path', '/tmp');
+
+    $dataDir = resolveDataDir();
+    if (!is_dir($dataDir)) {
+        mkdir($dataDir, 0755, true);
+    }
+
+    $bundleDir = dirname(__DIR__) . '/data';
+    $blockedWords = $bundleDir . '/blocked_words.json';
+    if (file_exists($blockedWords) && !file_exists($dataDir . '/blocked_words.json')) {
+        copy($blockedWords, $dataDir . '/blocked_words.json');
+    }
+}
+
+function kvRequest(array $command): ?array
+{
+    if (!kvConfigured()) {
+        return null;
+    }
+
+    $ch = curl_init(getenv('KV_REST_API_URL'));
+    if ($ch === false) {
+        return null;
+    }
+
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . getenv('KV_REST_API_TOKEN'),
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($command),
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    if ($response === false) {
+        return null;
+    }
+
+    return json_decode($response, true);
+}
+
+function kvGet(string $key): ?string
+{
+    $result = kvRequest(['GET', $key]);
+    if (!is_array($result)) {
+        return null;
+    }
+
+    $value = $result['result'] ?? null;
+    return is_string($value) ? $value : null;
+}
+
+function kvSet(string $key, string $value): bool
+{
+    $result = kvRequest(['SET', $key, $value]);
+    return is_array($result) && ($result['result'] ?? null) === 'OK';
+}
+
+bootstrapRuntime();
+
+define('DATA_DIR', resolveDataDir());
 define('WISHES_FILE', DATA_DIR . '/wishes.csv');
 define('RATE_LIMIT_FILE', DATA_DIR . '/rate_limits.json');
 define('ANALYTICS_FILE', DATA_DIR . '/analytics.json');
@@ -193,6 +279,17 @@ function normalizeWishRow(array $row): array
 
 function readWishes(): array
 {
+    if (kvConfigured()) {
+        $raw = kvGet('wishes');
+        if ($raw) {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                return array_map('normalizeWishRow', $decoded);
+            }
+        }
+        return [];
+    }
+
     initWishesFile();
     $wishes = [];
     if (($fp = fopen(WISHES_FILE, 'r')) === false) {
@@ -217,11 +314,32 @@ function readWishes(): array
 
 function appendSubmission(string $mobile, string $message, string $ip): string
 {
-    initWishesFile();
     $id = bin2hex(random_bytes(8));
     $timestamp = date('c');
 
+    if (kvConfigured()) {
+        $wishes = readWishes();
+        $wishes[] = normalizeWishRow([
+            'id' => $id,
+            'mobile' => $mobile,
+            'message' => $message,
+            'timestamp' => $timestamp,
+            'ip_address' => $ip,
+            'status' => 'approved',
+            'winner' => '0',
+            'approved_at' => $timestamp,
+        ]);
+        writeWishes($wishes);
+        trackAnalytics('submission');
+        return $id;
+    }
+
+    initWishesFile();
+
     $fp = fopen(WISHES_FILE, 'a');
+    if ($fp === false) {
+        throw new RuntimeException('Unable to save wish');
+    }
     fputcsv($fp, [$id, $mobile, $message, $timestamp, $ip, 'approved', '0', $timestamp], ',', '"', '\\');
     fclose($fp);
 
@@ -255,11 +373,22 @@ function trackAnalytics(string $event): void
 
 function writeWishes(array $wishes): void
 {
+    $normalized = array_map('normalizeWishRow', $wishes);
+
+    if (kvConfigured()) {
+        if (!kvSet('wishes', json_encode($normalized, JSON_UNESCAPED_UNICODE))) {
+            throw new RuntimeException('Unable to save wishes');
+        }
+        return;
+    }
+
     ensureDataDir();
     $fp = fopen(WISHES_FILE, 'w');
+    if ($fp === false) {
+        throw new RuntimeException('Unable to save wishes');
+    }
     fputcsv($fp, CSV_HEADERS, ',', '"', '\\');
-    foreach ($wishes as $wish) {
-        $wish = normalizeWishRow($wish);
+    foreach ($normalized as $wish) {
         fputcsv($fp, [
             $wish['id'],
             $wish['mobile'],

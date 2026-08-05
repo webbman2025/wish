@@ -7,3 +7,4 @@
 data/wishes.csv
 data/rate_limits.json
 data/analytics.json
+.env*.local
