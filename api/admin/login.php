@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../api/config.php';
+require_once __DIR__ . '/../config.php';
 
 $error = '';
 
@@ -27,7 +27,7 @@ if (!empty($_SESSION['admin_logged_in'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login — Make a Wish</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <style>
         .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
         .login-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 2rem; width: 100%; max-width: 360px; }
