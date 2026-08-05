@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 $mobile = sanitizeMobile($_GET['mobile'] ?? '');
+$limit = min(max((int) ($_GET['limit'] ?? 10), 1), 50);
+$offset = max((int) ($_GET['offset'] ?? 0), 0);
 
 $wishes = readWishes();
 $visible = array_values(array_filter(
@@ -23,16 +25,23 @@ $visible = array_values(array_filter(
 
 usort($visible, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
 
+$total = count($visible);
+$paged = array_slice($visible, $offset, $limit);
+
 $public = array_map(fn($w) => [
     'id' => $w['id'],
     'message' => $w['message'],
     'timestamp' => $w['timestamp'],
     'winner' => $w['winner'] === '1',
     'is_mine' => $mobile !== '' && isValidMobile($mobile) && ($w['mobile'] ?? '') === $mobile,
-], $visible);
+], $paged);
 
 jsonResponse([
     'success' => true,
     'wishes' => $public,
     'count' => count($public),
+    'total' => $total,
+    'offset' => $offset,
+    'limit' => $limit,
+    'has_more' => ($offset + count($public)) < $total,
 ]);

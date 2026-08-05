@@ -50,11 +50,11 @@ const FloatingBoard = {
 
     async fetchWishes() {
         try {
+            const params = new URLSearchParams({ limit: '20', offset: '0' });
             const mobile = MobileSession.get();
-            const url = mobile
-                ? `api/wishes.php?mobile=${encodeURIComponent(mobile)}`
-                : 'api/wishes.php';
-            const res = await fetch(url);
+            if (mobile) params.set('mobile', mobile);
+
+            const res = await fetch(`api/wishes.php?${params}`);
             const data = await res.json();
             if (data.success && data.wishes) {
                 this.wishes = data.wishes;
@@ -63,7 +63,6 @@ const FloatingBoard = {
                     this.wishHash = hash;
                     this.render();
                 }
-                WishFeed.update(this.wishes);
             }
         } catch (e) {
             console.warn('Failed to fetch wishes:', e);
@@ -86,12 +85,6 @@ const FloatingBoard = {
             }
         });
 
-        if (this.boardMode) {
-            const emptyEl = document.getElementById('board-empty');
-            if (emptyEl) {
-                emptyEl.classList.toggle('hidden', this.wishes.length > 0);
-            }
-        }
     },
 
     createBubble(wish, index, total) {

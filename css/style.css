@@ -909,6 +909,22 @@ body::after {
     font-size: 0.9rem;
 }
 
+.wish-feed-loading {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.board-page .wish-feed-loading {
+    color: rgba(26, 15, 46, 0.55);
+}
+
+.wish-feed-sentinel {
+    height: 1px;
+    width: 100%;
+}
+
 /* Footer */
 .footer {
     text-align: center;
