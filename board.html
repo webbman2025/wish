@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="《我未許願先吹蠟燭》許願板">
+    <meta name="theme-color" content="#ffffff">
+    <title>許願板 — 我未許願先吹蠟燭</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="board-page">
+    <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch to English">EN</button>
+
+    <main id="board-app" class="board-section">
+        <div class="board-header">
+            <a href="index.html" class="btn-back" data-i18n="btn.back">← 返回</a>
+            <h1 class="section-title" data-i18n="board.title">許願板</h1>
+            <p class="section-desc" data-i18n="board.desc">來自各方的願望，在星空中飄浮</p>
+        </div>
+
+        <div class="board-floating-area board-floating-hero">
+            <div id="board-fullscreen" class="board-fullscreen"></div>
+        </div>
+
+        <div id="wish-feed" class="wish-feed hidden"></div>
+        <p id="board-empty" class="board-empty hidden" data-i18n="board.empty">暫時還沒有許願，成為第一個許願的人吧！</p>
+    </main>
+
+    <footer class="footer">
+        <p data-i18n="footer.copyright">© 2026 3HK × 3SUPREME · 《我未許願先吹蠟燭》</p>
+        <p class="footer-note" data-i18n="footer.note">許願即時顯示 · 不當內容將被移除 · 個人資料受 PDPO 保障</p>
+    </footer>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/mobile-session.js"></script>
+    <script src="js/wish-feed.js"></script>
+    <script src="js/floating.js"></script>
+    <script src="js/board.js"></script>
+</body>
+</html>

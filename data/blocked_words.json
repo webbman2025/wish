@@ -1,0 +1,13 @@
+{
+  "profanity_en": [
+    "fuck", "fucking", "fucker", "shit", "bullshit", "bitch", "asshole",
+    "cunt", "dick", "pussy", "bastard", "damn", "wanker", "slut"
+  ],
+  "profanity_zh": [
+    "操", "屌", "撚", "閪", "柒", "仆街", "死全家", "收皮", "頂你",
+    "傻閪", "臭閪", "黐線", "撚樣", "死開"
+  ],
+  "sensitive": [
+    "炸彈", "恐怖分子"
+  ]
+}

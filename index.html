@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="《我未許願先吹蠟燭》許願板 — 許下你的願望，贏取電影優惠券！">
+    <meta name="theme-color" content="#1a0f2e">
+    <title>許願板 — 我未許願先吹蠟燭</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch to English">EN</button>
+
+    <!-- Main content -->
+    <main id="app">
+        <!-- Landing Section -->
+        <section id="landing" class="section landing">
+            <div class="landing-content">
+                <p class="campaign-intro" data-i18n-html="intro">
+                    在許願之前，蠟燭已悄然熄滅。<br>
+                    寫下你的願望，讓它飄向許願板。<br>
+                    <strong>每週最佳許願，贏取電影優惠券！</strong>
+                </p>
+
+                <button id="cta-make-wish" class="btn btn-primary btn-glow">
+                    <span class="btn-icon">🕯️</span>
+                    <span data-i18n="cta.makeWish">許個願</span>
+                </button>
+
+                <a id="cta-view-board" href="board.html" class="btn btn-secondary">
+                    <span data-i18n="cta.viewOthers">查看其他人的許願</span>
+                </a>
+            </div>
+
+            <div class="scroll-hint">
+                <span>↓</span>
+            </div>
+        </section>
+
+        <!-- Wish Form Section -->
+        <section id="wish-form-section" class="section form-section hidden">
+            <div class="form-container">
+                <button id="btn-back-landing" class="btn-back" data-i18n="btn.back" data-i18n-aria="btn.backAria">← 返回</button>
+
+                <h2 class="section-title" data-i18n="form.title">許下你的願望</h2>
+                <p class="section-desc" data-i18n="form.desc">寫下心中所願，吹熄蠟燭，讓願望飛向星空。</p>
+
+                <!-- Candle Animation -->
+                <div id="candle-container" class="candle-container">
+                    <div class="candle">
+                        <div class="candle-body">
+                            <div class="candle-drip"></div>
+                        </div>
+                        <div class="candle-wick"></div>
+                        <div id="flame" class="flame">
+                            <div class="flame-inner"></div>
+                        </div>
+                        <div id="smoke" class="smoke hidden">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="candle-base"></div>
+                </div>
+
+                <form id="wish-form" class="wish-form">
+                    <div class="form-group">
+                        <label for="mobile-input" data-i18n="form.mobileLabel">手機號碼</label>
+                        <input
+                            type="tel"
+                            id="mobile-input"
+                            name="mobile"
+                            inputmode="numeric"
+                            maxlength="12"
+                            placeholder="9123 4567"
+                            data-i18n-placeholder="form.mobilePlaceholder"
+                            required
+                            autocomplete="tel"
+                        >
+                        <p class="form-hint" data-i18n="form.mobileHint">用於同步你的許願記錄及發送優惠券（不會公開顯示）</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message-input" data-i18n="form.label">你的訊息</label>
+                        <textarea
+                            id="message-input"
+                            name="message"
+                            rows="3"
+                            maxlength="200"
+                            placeholder="我希望..."
+                            data-i18n-placeholder="form.placeholder"
+                            required
+                            autocomplete="off"
+                        ></textarea>
+                        <div class="char-count"><span id="char-count">0</span>/200</div>
+                    </div>
+
+                    <div id="form-error" class="form-error hidden" role="alert"></div>
+                    <div id="moderation-hint" class="form-error hidden" role="alert"></div>
+                    <div id="form-success" class="form-success hidden" role="status"></div>
+
+                    <button type="submit" id="btn-submit" class="btn btn-primary btn-block btn-glow" data-i18n="form.submit">
+                        吹熄蠟燭 · 送出許願
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p data-i18n="footer.copyright">© 2026 3HK × 3SUPREME · 《我未許願先吹蠟燭》</p>
+        <p class="footer-note" data-i18n="footer.note">許願內容經審核後方會顯示 · 個人資料受 PDPO 保障</p>
+    </footer>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/mobile-session.js"></script>
+    <script src="js/moderation.js"></script>
+    <script src="js/candle.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

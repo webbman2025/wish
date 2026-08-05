@@ -1,0 +1,9 @@
+.DS_Store
+.vercel
+.env
+.env.*
+
+# Runtime data (created on server)
+data/wishes.csv
+data/rate_limits.json
+data/analytics.json
