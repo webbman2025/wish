@@ -20,7 +20,7 @@ $offset = max((int) ($_GET['offset'] ?? 0), 0);
 $wishes = readWishes();
 $visible = array_values(array_filter(
     $wishes,
-    fn($w) => in_array($w['status'], ['approved', 'pending'], true)
+    fn($w) => $w['status'] === 'approved'
 ));
 
 usort($visible, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));

@@ -34,6 +34,7 @@ const FloatingBoard = {
     autoPanId: null,
     autoPanPaused: false,
     resumePanTimer: null,
+    showHintTimer: null,
 
     init(containerIds = ['floating-board'], options = {}) {
         this.containers = containerIds
@@ -66,6 +67,10 @@ const FloatingBoard = {
             clearTimeout(this.resumePanTimer);
             this.resumePanTimer = null;
         }
+        if (this.showHintTimer) {
+            clearTimeout(this.showHintTimer);
+            this.showHintTimer = null;
+        }
         this.containers.forEach((c) => (c.innerHTML = ''));
         this.wishHash = '';
         this.allWishes = [];
@@ -89,21 +94,26 @@ const FloatingBoard = {
             area.appendChild(hint);
         }
 
-        const onInteract = () => {
+        const pauseForUser = () => {
             this.pauseAutoPan();
-            this.hideSwipeHint();
             clearTimeout(this.resumePanTimer);
             this.resumePanTimer = setTimeout(() => this.resumeAutoPan(), 4000);
         };
 
         const onScroll = () => {
-            onInteract();
+            if (!this.autoPanPaused) {
+                this.checkLoadMore();
+                return;
+            }
+
+            this.hideSwipeHint();
+            this.scheduleShowSwipeHint();
             this.checkLoadMore();
         };
 
-        container.addEventListener('touchstart', onInteract, { passive: true });
-        container.addEventListener('mousedown', onInteract);
-        container.addEventListener('wheel', onInteract, { passive: true });
+        container.addEventListener('touchstart', pauseForUser, { passive: true });
+        container.addEventListener('mousedown', pauseForUser);
+        container.addEventListener('wheel', pauseForUser, { passive: true });
         container.addEventListener('scroll', onScroll, { passive: true });
 
         this.startAutoPan();
@@ -145,6 +155,15 @@ const FloatingBoard = {
 
     hideSwipeHint() {
         document.querySelector('.floating-swipe-hint')?.classList.add('is-hidden');
+    },
+
+    showSwipeHint() {
+        document.querySelector('.floating-swipe-hint')?.classList.remove('is-hidden');
+    },
+
+    scheduleShowSwipeHint() {
+        clearTimeout(this.showHintTimer);
+        this.showHintTimer = setTimeout(() => this.showSwipeHint(), 800);
     },
 
     buildUrl(offset, limit) {
@@ -289,7 +308,7 @@ const FloatingBoard = {
         section.setAttribute('role', 'group');
         section.setAttribute('aria-label', `Wishes ${sectionIndex + 1}`);
 
-        const slots = Math.max(wishes.length, 6);
+        const slots = Math.max(wishes.length, 4);
         const pool = [...wishes].sort(() => Math.random() - 0.5);
 
         for (let i = 0; i < slots; i++) {
@@ -326,12 +345,14 @@ const FloatingBoard = {
         bubble.setAttribute('aria-label', wish.message);
 
         const top = this.boardMode
-            ? 8 + (index / Math.max(total - 1, 1)) * 62
+            ? 10 + (index / Math.max(total - 1, 1)) * 50
             : 5 + (index / Math.max(total - 1, 1)) * 82;
         const duration = 22 + Math.random() * 18;
         const stagger = duration / total;
         const delay = -(index * stagger) - Math.random() * duration;
-        const drift = (Math.random() - 0.5) * 40;
+        const drift = this.boardMode
+            ? (Math.random() - 0.5) * 16
+            : (Math.random() - 0.5) * 40;
         const palette = this.boardMode ? this.boardColors : this.colors;
         let color;
         if (this.boardMode && wish.winner) {
