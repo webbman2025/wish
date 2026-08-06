@@ -746,6 +746,7 @@ body::after {
     min-height: 280px;
     max-height: 420px;
     margin: 0 1rem 1.25rem;
+    overflow: hidden;
 }
 
 .board-fullscreen {
@@ -753,6 +754,57 @@ body::after {
     inset: 0;
     z-index: 0;
     overflow: visible;
+}
+
+.board-fullscreen.board-scroll-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.board-fullscreen.board-scroll-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.floating-track {
+    display: flex;
+    height: 100%;
+    min-height: 100%;
+}
+
+.floating-section {
+    position: relative;
+    flex: 0 0 100%;
+    min-width: 100%;
+    height: 100%;
+    overflow: visible;
+    padding: 0 0.75rem;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.floating-swipe-hint {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    margin: 0;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    color: rgba(26, 15, 46, 0.55);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(26, 15, 46, 0.12);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.floating-swipe-hint.is-hidden {
+    opacity: 0;
 }
 
 .board-page .board-section {
@@ -792,27 +844,53 @@ body::after {
 }
 
 .board-page .board-floating-area {
-    background: #ffffff;
-    border-color: rgba(26, 15, 46, 0.1);
+    background: #774FDA;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.board-page .floating-section {
+    background: #774FDA;
+}
+
+.board-page .floating-swipe-hint {
+    color: #ffffff;
+    background: rgba(26, 16, 51, 0.72);
+    border-color: rgba(255, 255, 255, 0.35);
 }
 
 .board-page .wish-bubble {
-    color: #1a0f2e;
-    font-weight: 500;
-    border: 1px solid rgba(26, 15, 46, 0.18);
-    box-shadow: 0 2px 10px rgba(26, 15, 46, 0.1);
+    color: #1A1033;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border: 2px solid rgba(26, 16, 51, 0.22);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    max-width: calc(100% - 1.5rem);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
 }
 
 .board-page .wish-bubble.winner {
-    border-color: #c9a84c;
-    box-shadow: 0 2px 12px rgba(201, 168, 76, 0.35);
+    color: #1A1033;
+    background: #FFFBEB !important;
+    border-color: #B45309;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .board-page .wish-bubble.mine {
-    border-color: #06a67d;
-    box-shadow: 0 2px 12px rgba(6, 166, 125, 0.25);
+    color: #1A1033;
+    background: #ECFDF5 !important;
+    border-color: #047857;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.board-page .wish-bubble.winner.mine {
+    background: #FEF3C7 !important;
+    border-color: #B45309;
 }
 
 .board-page .wish-card {
@@ -946,5 +1024,9 @@ body::after {
     .wish-bubble {
         max-width: 50vw;
         font-size: 0.875rem;
+    }
+
+    .board-page .wish-bubble {
+        max-width: min(340px, calc(100% - 1.5rem));
     }
 }
